@@ -8,8 +8,10 @@ from game.level import Level, LevelConfig
 from game.timer import Timer
 
 levels = [
-    LevelConfig(HiveConfig(4)),
-    LevelConfig(HiveConfig(2))
+    LevelConfig(HiveConfig(4), direction=constants.DIRECTION_DOWN),
+    LevelConfig(HiveConfig(2), direction=constants.DIRECTION_RIGHT),
+    LevelConfig(HiveConfig(2), direction=constants.DIRECTION_UP),
+    LevelConfig(HiveConfig(2), direction=constants.DIRECTION_LEFT),
 ]
 
 
@@ -32,9 +34,9 @@ class Game:
         self.arena = Arena((marginHorizontal, marginVertical),
                            (constants.WIDTH - marginHorizontal * 2, constants.HEIGHT - marginVertical * 2))
 
-        self.active_level = self.__nextLevel()
+        self.active_level = self.__next_level()
 
-    def __nextLevel(self):
+    def __next_level(self):
         # print('Next level:', self.level_count, len(self.level_configs))
         if self.level_count < len(levels):
             level = Level(self, levels[self.level_count])
@@ -65,28 +67,19 @@ class Game:
 
         self.active_level.tick()
         # determine end of a level, either continue, die, or win
-        if self.active_level.hasEnded:
-            self.hasLost = self.active_level.hasLost
-            self.hasWon = self.active_level.hasWon
+        if self.active_level.completed:
+            self.hasLost = self.active_level.has_lost
+            self.hasWon = self.active_level.has_won
 
-            if self.active_level.hasWon:
-                if not self.checkFinished():
-                    self.__nextLevel()
+            if self.active_level.has_won:
+                if not self.__check_finished():
+                    self.__next_level()
                     return
 
             self.hasEnded = True
             self.running = False
 
-    def moveActors(self):
-        self.active_level.moveActors()
-
-    def checkCollisions(self):
-        self.active_level.checkCollisions()
-
-    def checkState(self):
-        self.active_level.checkState()
-
-    def checkFinished(self):
+    def __check_finished(self):
         return self.level_count >= len(self.level_configs)
 
     # def calculateTime(self):
@@ -97,16 +90,16 @@ class Game:
     #
     #     return self.timer.get(1)
 
-    def renderArena(self):
+    def __render_arena(self):
         pygame.draw.rect(self.win, (240, 240, 240), self.arena.rect)
 
-    def renderUI(self):
+    def __render_ui(self):
         pass
 
-    def redrawGame(self):
-        self.renderUI()
-        self.renderArena()
-        self.active_level.redrawLevel()
+    def render_game(self):
+        self.__render_ui()
+        self.__render_arena()
+        self.active_level.redraw_level()
 
-    def handleEvent(self, event):
-        self.active_level.handleEvent(event)
+    def handle_event(self, event):
+        self.active_level.handle_event(event)

@@ -4,6 +4,8 @@ config:
       width: 100
       height: 50
       color: [0, 255, 0]
+      velocity: 3
+      max_health: 3
       image: ""
       sfx:
         hit: "assets/sfx/sfx_hit.wav"
@@ -14,6 +16,9 @@ config:
         width: 50
         height: 50
         color: [255, 0, 255]
+        velocity: 2
+        max_health: 3
+        score_gain: 1
         images:
           healthy: "assets/img/invader_1.png"
           damaged: "assets/img/invader_2.png"
@@ -25,6 +30,7 @@ config:
         width: 5
         height: 10
         color: [255, 0, 0]
+        velocity: 3
         image: "assets/img/projectile_1.png"
         sfx:
           hit: "assets/sfx/sfx_hit.wav"

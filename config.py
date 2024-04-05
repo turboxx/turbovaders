@@ -12,6 +12,8 @@ class ConfigPlayer:
     width: int = configPlayer['width']
     height: int = configPlayer['height']
     color: tuple[int, int, int] = configPlayer['color']
+    velocity: int = configPlayer['velocity']
+    max_health: int = configPlayer['max_health']
     sfx_hit: str = configPlayer['sfx']['hit']
     sfx_death: str = configPlayer['sfx']['death']
 
@@ -23,6 +25,9 @@ class ConfigInvader:
     width: int = configInvaderBasic['width']
     height: int = configInvaderBasic['height']
     color: tuple[int, int, int] = configInvaderBasic['color']
+    velocity: int = configInvaderBasic['velocity']
+    max_health: int = configInvaderBasic['max_health']
+    score_gain: int = configInvaderBasic['score_gain']
     image_healthy: str = configInvaderBasic['images']['healthy']
     image_damaged: str = configInvaderBasic['images']['damaged']
     image_dying: str = configInvaderBasic['images']['dying']
@@ -30,13 +35,13 @@ class ConfigInvader:
 
 
 configProjectileBasic = configFileData['config']['actors']['projectiles']['basic']
-print(configProjectileBasic)
 
 
 class ConfigProjectile:
     width: int = configProjectileBasic['width']
     height: int = configProjectileBasic['height']
     color: tuple[int, int, int] = configProjectileBasic['color']
+    velocity: int = configProjectileBasic['velocity']
     image: str = configProjectileBasic['image']
     sfx_hit: str = configProjectileBasic['sfx']['hit']
 

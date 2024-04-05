@@ -9,7 +9,7 @@
 * [ ] Spawning
   * [ ] Invaders
 * [ ] Power ups
-* [ ] Primary direction Agnostic Movement
+* [x] Primary direction Agnostic Movement
 
 ### Builds
 * [x] Windows
