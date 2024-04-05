@@ -2,7 +2,8 @@
 
 added_files = [
     ( 'assets/img/**', 'assets/img' ),
-    ( 'assets/sfx/**', 'assets/sfx' )
+    ( 'assets/sfx/**', 'assets/sfx' ),
+    ( 'config.yml', '.' )
     ]
 
 a = Analysis(

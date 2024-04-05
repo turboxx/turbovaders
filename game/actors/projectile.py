@@ -1,26 +1,25 @@
-import pygame
-
 import constants
-import file_utils
 from config import Config
+from game.utils import loadAndTransformImg, loadSound
 
-IMG_PROJECTILE = pygame.transform.scale(pygame.image.load(file_utils.resource_path('assets/img/projectile_1.png')), (5, 10))
+projectileConfig = Config.projectile
+projectileSize = (projectileConfig.width, projectileConfig.height)
+IMG_PROJECTILE = loadAndTransformImg(projectileConfig.image, projectileSize)
 
-SFX_HIT = pygame.mixer.Sound(file_utils.resource_path('assets/sfx/sfx_hit.wav'))
+SFX_HIT = loadSound(projectileConfig.sfx_hit)
 
 
 class Projectile:
     def __init__(self, creator, x, y, direction):
-        (width, height, color) = Config.projectile
         self.creator = creator
         self.level = creator.level
         self.x = x
         self.y = y
         self.direction = direction
-        self.width = width
-        self.height = height
-        self.color = color
-        self.rect = (x, y, width, height)
+        self.width = Config.projectile.width
+        self.height = Config.projectile.height
+        self.color = Config.projectile.color
+        self.rect = (x, y, self.width, self.height)
         self.vel = 3
         self.alive = True
 

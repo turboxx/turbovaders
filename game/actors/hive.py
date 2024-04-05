@@ -6,19 +6,22 @@ import constants
 from config import Config
 import file_utils
 from game.actors.projectile import Projectile
+from game.utils import loadAndTransformImg, loadSound
 
-IMG_INVADER_1 = pygame.transform.scale(pygame.image.load(file_utils.resource_path('assets/img/invader_1.png')),
-                                       (50, 50))
-IMG_INVADER_2 = pygame.transform.scale(pygame.image.load(file_utils.resource_path('assets/img/invade_r2.png')),
-                                       (50, 50))
-IMG_INVADER_3 = pygame.transform.scale(pygame.image.load(file_utils.resource_path('assets/img/invader_3.png')),
-                                       (50, 50))
+invaderConfig = Config.invader
+invaderSize = (invaderConfig.width, invaderConfig.height)
 
-SFX_HIT = pygame.mixer.Sound(file_utils.resource_path('assets/sfx/sfx_hit.wav'))
+# Images
+IMG_INVADER_BASIC_HEALTHY = loadAndTransformImg(invaderConfig.image_healthy, invaderSize)
+IMG_INVADER_BASIC_DAMAGED = loadAndTransformImg(invaderConfig.image_damaged, invaderSize)
+IMG_INVADER_BASIC_DYING = loadAndTransformImg(invaderConfig.image_dying, invaderSize)
+# sounds
+SFX_HIT = loadSound(invaderConfig.sfx_hit)
 
 
 class HiveConfig:
-    def __init__(self, init_count: int, can_spawn: bool = False, final_count: int = 10, can_speed_up: bool = False, can_berserk: bool = False):
+    def __init__(self, init_count: int, can_spawn: bool = False, final_count: int = 10, can_speed_up: bool = False,
+                 can_berserk: bool = False):
         self.init_count = init_count
         self.final_count = final_count
         self.can_spawn = can_spawn
@@ -40,7 +43,7 @@ class Hive:
         self.invaders.append(Invader(self.level, x, y))
 
     def spawn_level(self):
-        (iWidth, iHeight, iColor) = Config.invader
+        iWidth = invaderConfig.width
         offsetY = self.level.game.arena.y + 10
         offsetX = self.level.game.arena.x + 10
         space_between = 10
@@ -115,14 +118,13 @@ class Hive:
 
 class Invader:
     def __init__(self, level, x, y):
-        (width, height, color) = Config.invader
         self.level = level
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
-        self.color = color
-        self.rect = (x, y, width, height)
+        self.width = invaderConfig.width
+        self.height = invaderConfig.height
+        self.color = invaderConfig.color
+        self.rect = (x, y, invaderConfig.width, invaderConfig.height)
         self.vel = 2
         self.direction = constants.DIRECTION_DOWN
         self.health = 3
@@ -168,11 +170,11 @@ class Invader:
     def draw(self, win):
         if self.alive:
             if self.health == 3:
-                img = IMG_INVADER_3.copy()
+                img = IMG_INVADER_BASIC_DYING.copy()
             elif self.health == 2:
-                img = IMG_INVADER_2.copy()
+                img = IMG_INVADER_BASIC_DAMAGED.copy()
             else:
-                img = IMG_INVADER_1.copy()
+                img = IMG_INVADER_BASIC_HEALTHY.copy()
 
             win.blit(img, self.rect)
             # pygame.draw.rect(win, color, self.rect)

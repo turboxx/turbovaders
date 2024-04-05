@@ -1,25 +1,25 @@
 import pygame
 
 import constants
-import file_utils
+from config import Config
 from game.actors.projectile import Projectile
+from game.utils import loadSound
 
-# IMG_INVADER_1 = pygame.transform.scale(pygame.image.load(utils.resource_path('assets/img/invader_1.png')), (50, 50))
+playerConfig = Config.player
 
-SFX_HIT = pygame.mixer.Sound(file_utils.resource_path('assets/sfx/sfx_hit.wav'))
-# SFX_DEATH = pygame.mixer.Sound(file_utils.resource_path('assets/sfx/sfx_death.wav'))
-SFX_DEATH = SFX_HIT
+SFX_HIT = loadSound(playerConfig.sfx_hit)
+SFX_DEATH = loadSound(playerConfig.sfx_death)
 
 
 class Player:
-    def __init__(self, level, x, y, width, height, color):
+    def __init__(self, level, x, y):
         self.level = level
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
-        self.color = color
-        self.rect = (x, y, width, height)
+        self.width = Config.player.width
+        self.height = Config.player.height
+        self.color = Config.player.color
+        self.rect = (x, y, self.width, self.height)
         self.vel = 3
         self.alive = True
         self.health = 3

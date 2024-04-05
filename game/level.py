@@ -1,15 +1,14 @@
 import pygame
 
 import constants
-import file_utils
 from config import Config
 from game.actors.hive import Hive
 from game.actors.player import Player
 from game.timer import Timer
 from game.ui.utils import renderText
+from game.utils import loadSound
 
-# SFX_DEATH = pygame.mixer.Sound(file_utils.resource_path('assets/sfx/sfx_death.wav'))
-SFX_DEATH = pygame.mixer.Sound(file_utils.resource_path('assets/sfx/sfx_hit.wav'))
+SFX_DEATH = loadSound(Config.player.sfx_death)
 
 
 class LevelConfig:
@@ -45,9 +44,10 @@ class Level:
         self.hasEnded = False
 
     def __generateStartingActors(self):
-        (pWidth, pHeight, pColor) = Config.player
+        pWidth = Config.player.width
+
         projectiles = []
-        player = Player(self, self.game.arena.x + self.game.arena.width / 2 - pWidth / 2, self.game.arena.height - 5, pWidth, pHeight, pColor)
+        player = Player(self, self.game.arena.x + self.game.arena.width / 2 - pWidth / 2, self.game.arena.height - 5)
         hive = Hive(self, self.config.hive_config)
 
         invaders = hive.spawn_level()
