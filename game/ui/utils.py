@@ -8,3 +8,12 @@ def renderText(win, text, color, size, position):
     (x, y) = position
     rect.topleft = (x - rect.width / 2, y - size / 2)
     win.blit(img, rect)
+
+
+def create_text(text, color, size):
+    font = pygame.font.SysFont(pygame.font.get_default_font(), size)
+    img = font.render(text, True, color)
+    rect = img.get_rect()
+    # rect.topleft = (x - rect.width / 2, y - size / 2)
+
+    return img
