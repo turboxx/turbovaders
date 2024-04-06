@@ -40,6 +40,8 @@ class Game:
             level = Level(self, levels[self.level_count])
             self.active_level = level
             self.level_count += 1
+            self.timer.pause()
+
             return level
 
         return self.active_level
@@ -61,7 +63,7 @@ class Game:
 
     def calculate_time(self):
         if not self.timer.time_started:
-            self.timer.start()
+            return 0
 
         return self.timer.get(1)
 
@@ -70,6 +72,13 @@ class Game:
             return
 
         self.active_level.tick()
+
+        if self.active_level.loaded:
+            # for first level
+            self.timer.start()
+            # for level transitions
+            self.timer.resume()
+
         # determine end of a level, either continue, die, or win
         if self.active_level.completed:
             self.has_lost = self.active_level.has_lost
@@ -92,10 +101,10 @@ class Game:
         win_rect = self.win.get_rect()
 
         return Arena((margin_horizontal, margin_vertical),
-                           (win_rect.width - margin_horizontal * 2, win_rect.height - margin_vertical * 2))
+                     (win_rect.width - margin_horizontal * 2, win_rect.height - margin_vertical * 2))
 
     def render_game(self):
-        self.active_level.redraw_level()
+        self.active_level.render()
 
     def handle_event(self, event):
         self.active_level.handle_event(event)

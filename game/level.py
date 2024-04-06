@@ -1,4 +1,5 @@
 import pygame
+import time
 
 from constants import Direction, FPS
 from game.actors.hive import Hive
@@ -24,6 +25,7 @@ class Level:
         self.spawner = LevelSpawner(self)
 
         # state
+        self.loaded = False
         self.completed = False
         self.has_lost = False
         self.has_won = False
@@ -40,6 +42,9 @@ class Level:
 
         self.timer = Timer()
 
+        self.loading_delay = 3
+        self.loading_start_time = None
+
     def __generateStartingActors(self):
         (p_x, p_y) = self.spawner.get_player_starting_location()
 
@@ -51,11 +56,15 @@ class Level:
 
     def tick(self):
         self.clock.tick(FPS)
-        self.moveActors()
-        self.checkCollisions()
+        if not self.loaded:
+            self.__check_loaded()
+            return
+
+        self.move_actors()
+        self.check_collisions()
         self.check_state()
 
-    def moveActors(self):
+    def move_actors(self):
         self.player.move()
 
         direction = self.hive.determine_invader_direction()
@@ -66,7 +75,7 @@ class Level:
         for projectile in self.projectiles:
             projectile.move()
 
-    def checkCollisions(self):
+    def check_collisions(self):
         playerRect = pygame.Rect(self.player.rect)
         for projectile in self.projectiles:
             if not projectile.alive:
@@ -106,6 +115,20 @@ class Level:
             self.finish(True)
             return
 
+    def __check_loaded(self):
+        if not self.loading_start_time:
+            self.loading_start_time = time.perf_counter()
+            return
+
+        if self.get_loading_time_remaining() <= 0:
+            self.loaded = True
+
+    def get_loading_time_remaining(self):
+        if not self.loading_start_time:
+            self.loading_start_time = time.perf_counter()
+
+        return max(self.loading_delay - int(time.perf_counter() - self.loading_start_time), 0)
+
     def finish(self, victory: bool):
         if victory:
             self.has_won = True
@@ -115,7 +138,7 @@ class Level:
 
         self.completed = True
 
-    def redraw_level(self):
+    def render(self):
         self.player.draw(self.win)
 
         for invader in self.invaders:
@@ -125,6 +148,9 @@ class Level:
             projectile.draw(self.win)
 
     def handle_event(self, event):
+        if not self.loaded:
+            return
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 self.player.fire()

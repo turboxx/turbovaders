@@ -23,6 +23,9 @@ class ScreenGame(AScreen):
 
         self.game.render_game()
 
+        if not self.game.active_level.loaded:
+            self.__render_count_down_overlay()
+
         if not self.game.running:
             self.__render_pause_overlay()
 
@@ -81,7 +84,6 @@ class ScreenGame(AScreen):
 
         self.win.blit(ui_surface, ui_dest)
 
-
     def __render_pause_overlay(self):
         win_rect = self.win.get_rect()
         color_background = Color.BLACK.value
@@ -106,19 +108,38 @@ class ScreenGame(AScreen):
 
         self.win.blit(pause_screen_ui, (0, 0))
 
+    def __render_count_down_overlay(self):
+        win_rect = self.win.get_rect()
+        color_background = Color.BLACK.value
+        color_primary = Color.WHITE.value
+        font_size = 48
+
+        pause_screen_fade = pygame.Surface(win_rect.size)
+        pause_screen_fade.fill(color_background)
+        pause_screen_fade.set_alpha(160)
+        self.win.blit(pause_screen_fade, (0, 0))
+
+        pause_screen_ui = pygame.Surface(win_rect.size, pygame.SRCALPHA, 32)
+        pause_screen_ui.convert_alpha()
+        pause_screen_ui_rect = pause_screen_ui.get_rect()
+
+        time = self.game.active_level.get_loading_time_remaining()
+
+        renderText(pause_screen_ui,
+                   f'{time}', color_primary, font_size,
+                   (pause_screen_ui_rect.width / 2, pause_screen_ui_rect.height / 2))
+
+        self.win.blit(pause_screen_ui, (0, 0))
+
     def pause(self):
         self.game.stop()
         self.unloadMusic()
         self.music_file = MUSIC_PAUSE_FILE
 
-        pass
-
     def unpause(self):
         self.game.start()
         self.unloadMusic()
         self.music_file = MUSIC_GAME_FILE
-
-        pass
 
     def handleEvent(self, event):
         super().handleEvent(event)
