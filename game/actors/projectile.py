@@ -1,13 +1,13 @@
 import pygame
 
-import constants
+from constants import Direction
 from config import Config
 from game.actors.actor import AActor
-from game.utils import loadAndTransformImg
+from game.utils import load_and_transform_img
 
 projectileConfig = Config.projectile
 projectileSize = (projectileConfig.width, projectileConfig.height)
-IMG_PROJECTILE = loadAndTransformImg(projectileConfig.image, projectileSize)
+IMG_PROJECTILE = load_and_transform_img(projectileConfig.image, projectileSize)
 
 
 class Projectile(AActor):
@@ -16,7 +16,7 @@ class Projectile(AActor):
         height = Config.projectile.height
         velocity = Config.projectile.velocity
         # rotate
-        if direction is constants.DIRECTION_RIGHT or direction is constants.DIRECTION_LEFT:
+        if direction is Direction.RIGHT or direction is Direction.LEFT:
             width = Config.projectile.width
             height = Config.projectile.height
 
@@ -31,13 +31,13 @@ class Projectile(AActor):
 
     def get_move_vector(self):
         vector = (0, 0)
-        if self.direction is constants.DIRECTION_DOWN:
+        if self.direction is Direction.DOWN:
             vector = (0, self.velocity)
-        if self.direction is constants.DIRECTION_UP:
+        if self.direction is Direction.UP:
             vector = (0, -self.velocity)
-        if self.direction is constants.DIRECTION_LEFT:
+        if self.direction is Direction.LEFT:
             vector = (-self.velocity, 0)
-        if self.direction is constants.DIRECTION_RIGHT:
+        if self.direction is Direction.RIGHT:
             vector = (self.velocity, 0)
 
         return pygame.Vector2(vector)
@@ -60,11 +60,11 @@ class Projectile(AActor):
 
     def __rotate_img(self, img):
         angle = 0
-        if self.direction == constants.DIRECTION_UP:
+        if self.direction == Direction.UP:
             angle = 180
-        if self.direction == constants.DIRECTION_LEFT:
+        if self.direction == Direction.LEFT:
             angle = 270
-        if self.direction == constants.DIRECTION_RIGHT:
+        if self.direction == Direction.RIGHT:
             angle = 90
 
         return pygame.transform.rotate(img, angle)

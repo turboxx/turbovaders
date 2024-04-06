@@ -5,7 +5,7 @@ import file_utils
 with open(file_utils.resource_path("config.yml"), 'r') as file:
     configFileData: dict = yaml.safe_load(file)
 
-configPlayer = configFileData['config']['actors']['player']
+configPlayer = configFileData['actors']['player']
 
 
 class ConfigPlayer:
@@ -18,7 +18,7 @@ class ConfigPlayer:
     sfx_death: str = configPlayer['sfx']['death']
 
 
-configInvaderBasic = configFileData['config']['actors']['invaders']['basic']
+configInvaderBasic = configFileData['actors']['invaders']['basic']
 
 
 class ConfigInvader:
@@ -34,7 +34,7 @@ class ConfigInvader:
     sfx_hit: str = configInvaderBasic['sfx']['hit']
 
 
-configProjectileBasic = configFileData['config']['actors']['projectiles']['basic']
+configProjectileBasic = configFileData['actors']['projectiles']['basic']
 
 
 class ConfigProjectile:
@@ -46,8 +46,18 @@ class ConfigProjectile:
     sfx_hit: str = configProjectileBasic['sfx']['hit']
 
 
+configScreens = configFileData['screens']
+
+
+class ConfigScreens:
+    menu = configScreens['menu']
+    game = configScreens['game']
+    result = configScreens['result']
+
+
 class Config:
     # width, height
     player = ConfigPlayer
     invader = ConfigInvader
     projectile = ConfigProjectile
+    screens = ConfigScreens

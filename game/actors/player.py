@@ -1,6 +1,6 @@
 import pygame
 
-import constants
+from constants import Direction
 from config import Config
 from game.actors.actor import AActor
 from game.actors.projectile import Projectile
@@ -13,11 +13,11 @@ SFX_DEATH = loadSound(playerConfig.sfx_death)
 
 
 class Player(AActor):
-    def __init__(self, level, x, y):
+    def __init__(self, level, x: int, y: int):
         width = playerConfig.width
         height = playerConfig.height
         # rotating actor
-        if level.config.direction is constants.DIRECTION_RIGHT or level.config.direction is constants.DIRECTION_LEFT:
+        if level.config.direction is Direction.RIGHT or level.config.direction is Direction.LEFT:
             width = playerConfig.height
             height = playerConfig.width
 
@@ -44,16 +44,14 @@ class Player(AActor):
     def __get_projectile_position(self):
         offset = 5
 
-        if self.fire_direction == constants.DIRECTION_DOWN:
+        if self.fire_direction == Direction.DOWN:
             return self.x + self.width / 2, self.y + self.height + offset
-        if self.fire_direction == constants.DIRECTION_UP:
+        if self.fire_direction == Direction.UP:
             return self.x + self.width / 2, self.y - offset * 2
-        if self.fire_direction == constants.DIRECTION_LEFT:
+        if self.fire_direction == Direction.LEFT:
             return self.x - offset * 2, self.y + self.height / 2
-        if self.fire_direction == constants.DIRECTION_RIGHT:
+        if self.fire_direction == Direction.RIGHT:
             return self.x + self.width + offset, self.y + self.height / 2
-
-
 
     def hit(self):
         SFX_HIT.play()
@@ -76,40 +74,31 @@ class Player(AActor):
     def get_move_vector(self):
         keys = pygame.key.get_pressed()
 
+        # arrow keys sems to be bugged or used wrong, once pressed they stay pressed
+        # print(keys[pygame.K_a], keys[pygame.K_LEFT], keys[pygame.K_d], keys[pygame.K_RIGHT])
+
+        move_left = keys[pygame.K_a]
+        move_right = keys[pygame.K_d]
+
         vector = (0, 0)
-        if self.level.config.direction is constants.DIRECTION_DOWN:
-            if keys[pygame.K_a]:
+        if move_left:
+            if self.level.config.direction is Direction.DOWN:
                 vector = (-self.velocity, 0)
-
-            if keys[pygame.K_d]:
+            if self.level.config.direction is Direction.UP:
                 vector = (self.velocity, 0)
-
-        if self.level.config.direction is constants.DIRECTION_UP:
-            if keys[pygame.K_a]:
-                vector = (self.velocity, 0)
-
-            if keys[pygame.K_d]:
-                vector = (-self.velocity, 0)
-
-        if self.level.config.direction is constants.DIRECTION_RIGHT:
-            if keys[pygame.K_a]:
+            if self.level.config.direction is Direction.RIGHT:
                 vector = (0, self.velocity)
-
-            if keys[pygame.K_d]:
+            if self.level.config.direction is Direction.LEFT:
                 vector = (0, -self.velocity)
 
-        if self.level.config.direction is constants.DIRECTION_LEFT:
-            if keys[pygame.K_a]:
+        if move_right:
+            if self.level.config.direction is Direction.DOWN:
+                vector = (self.velocity, 0)
+            if self.level.config.direction is Direction.UP:
+                vector = (-self.velocity, 0)
+            if self.level.config.direction is Direction.RIGHT:
                 vector = (0, -self.velocity)
-
-            if keys[pygame.K_d]:
+            if self.level.config.direction is Direction.LEFT:
                 vector = (0, self.velocity)
-
-
-        # if keys[pygame.K_w]:
-        #     vector = (0, -self.velocity)
-        #
-        # if keys[pygame.K_s]:
-        #     vector = (0, self.velocity)
 
         return pygame.Vector2(vector)

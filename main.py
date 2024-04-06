@@ -16,10 +16,11 @@ from game.screens.result import ScreenResult
 
 WIN = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
 
+
 def initScreens(win, clock, options: Options):
     menuScreen = ScreenMenu(win, clock, options)
     gameScreen = ScreenGame(win, clock, options)
-    resultScreen = ScreenResult(win, clock,  options)
+    resultScreen = ScreenResult(win, clock, options)
 
     return [menuScreen, gameScreen, resultScreen]
 
@@ -80,7 +81,7 @@ def main():
 
         if state == constants.STATE_GAME:
             game.tick()
-            if game.hasEnded:
+            if game.has_ended:
                 (state, activeScreen) = changeState(state, constants.STATE_RESULT, activeScreen, screens)
 
         # rendering

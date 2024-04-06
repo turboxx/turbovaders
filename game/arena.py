@@ -2,7 +2,7 @@ import pygame
 
 
 class Arena:
-    def __init__(self, position, size):
+    def __init__(self, position: tuple[int, int], size: tuple[int, int]):
         (x, y) = position
         (width, height) = size
         self.x = x
@@ -15,4 +15,5 @@ class Arena:
         # print(rect, self.rect)
         return self.rect.contains(rect)
 
-
+    def __str__(self):
+        return f'{self.__class__.__name__}: (x: {self.x}, y: {self.y}) width: {self.width} height: {self.height}'

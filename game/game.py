@@ -1,6 +1,6 @@
 import pygame
 
-import constants
+from constants import Direction
 
 from game.actors.hive import HiveConfig
 from game.arena import Arena
@@ -8,10 +8,10 @@ from game.level import Level, LevelConfig
 from game.timer import Timer
 
 levels = [
-    LevelConfig(HiveConfig(4), direction=constants.DIRECTION_DOWN),
-    LevelConfig(HiveConfig(2), direction=constants.DIRECTION_RIGHT),
-    LevelConfig(HiveConfig(2), direction=constants.DIRECTION_UP),
-    LevelConfig(HiveConfig(2), direction=constants.DIRECTION_LEFT),
+    LevelConfig(HiveConfig(4), direction=Direction.DOWN),
+    LevelConfig(HiveConfig(2), direction=Direction.RIGHT),
+    LevelConfig(HiveConfig(2), direction=Direction.UP),
+    LevelConfig(HiveConfig(2), direction=Direction.LEFT),
 ]
 
 
@@ -24,15 +24,13 @@ class Game:
         self.level_count = 0
         self.timer = Timer()
         self.running = True
-        self.hasEnded = False
-        self.hasLost = False
-        self.hasWon = False
+        self.has_ended = False
+        self.has_lost = False
+        self.has_won = False
 
         self.level_configs = levels
-        marginVertical = 50
-        marginHorizontal = 50
-        self.arena = Arena((marginHorizontal, marginVertical),
-                           (constants.WIDTH - marginHorizontal * 2, constants.HEIGHT - marginVertical * 2))
+
+        self.arena = self.__create_arena()
 
         self.active_level = self.__next_level()
 
@@ -58,8 +56,14 @@ class Game:
 
     def resign(self):
         self.running = False
-        self.hasLost = True
-        self.hasEnded = True
+        self.has_lost = True
+        self.has_ended = True
+
+    def calculate_time(self):
+        if not self.timer.time_started:
+            self.timer.start()
+
+        return self.timer.get(1)
 
     def tick(self):
         if not self.running:
@@ -68,37 +72,29 @@ class Game:
         self.active_level.tick()
         # determine end of a level, either continue, die, or win
         if self.active_level.completed:
-            self.hasLost = self.active_level.has_lost
-            self.hasWon = self.active_level.has_won
+            self.has_lost = self.active_level.has_lost
+            self.has_won = self.active_level.has_won
 
             if self.active_level.has_won:
                 if not self.__check_finished():
                     self.__next_level()
                     return
 
-            self.hasEnded = True
+            self.has_ended = True
             self.running = False
 
     def __check_finished(self):
         return self.level_count >= len(self.level_configs)
 
-    # def calculateTime(self):
-    #     # todo: it's weird the timer starts here in rendering and not in tick
-    #     if not self.timer:
-    #         self.timer = Timer()
-    #         self.timer.start()
-    #
-    #     return self.timer.get(1)
+    def __create_arena(self):
+        margin_vertical = 50
+        margin_horizontal = 50
+        win_rect = self.win.get_rect()
 
-    def __render_arena(self):
-        pygame.draw.rect(self.win, (240, 240, 240), self.arena.rect)
-
-    def __render_ui(self):
-        pass
+        return Arena((margin_horizontal, margin_vertical),
+                           (win_rect.width - margin_horizontal * 2, win_rect.height - margin_vertical * 2))
 
     def render_game(self):
-        self.__render_ui()
-        self.__render_arena()
         self.active_level.redraw_level()
 
     def handle_event(self, event):

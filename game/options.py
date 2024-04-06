@@ -3,29 +3,29 @@ from file_utils import check_dev_mode
 
 class SoundOptions:
     def __init__(self, dev_mode):
-        self.canPlayMusic = False if dev_mode else True
+        self.can_play_music = False if dev_mode else True
         # 100 is currently too fucking loud from the get go
-        self.volumeMusic = 30
-        self.volumeSFX = 100
+        self.volume_music = 30
+        self.volume_sfx = 100
 
-    def toggleMute(self):
-        self.canPlayMusic = not self.canPlayMusic
+    def toggle_mute(self):
+        self.can_play_music = not self.can_play_music
 
-    def getVolumeMusic(self):
-        return 0 if not self.canPlayMusic else self.volumeMusic
+    def get_volume_music(self):
+        return 0 if not self.can_play_music else self.volume_music
 
-    def setVolumeMusic(self, volume: int):
-        self.volumeMusic = volume
+    def set_volume_music(self, volume: int):
+        self.volume_music = volume
 
-    def setVolumeSFX(self, volume: int):
-        self.volumeMusic = volume
+    def set_volume_sfx(self, volume: int):
+        self.volume_music = volume
 
 
 class Options:
     def __init__(self):
         self.load()
-        self.devMode = check_dev_mode()
-        self.sound = SoundOptions(self.devMode)
+        self.dev_mode = check_dev_mode()
+        self.sound = SoundOptions(self.dev_mode)
 
     # todo: load from some persistence
     def load(self):

@@ -1,16 +1,15 @@
 import pygame
 
-import constants
-from config import Config
+from constants import Direction, FPS
 from game.actors.hive import Hive
 from game.actors.player import Player
 from game.actors.projectile import Projectile
+from game.level_spawner import LevelSpawner
 from game.timer import Timer
-from game.ui.utils import renderText
 
 
 class LevelConfig:
-    def __init__(self, hive_config, direction=constants.DIRECTION_DOWN):
+    def __init__(self, hive_config, direction=Direction.DOWN):
         self.hive_config = hive_config
         self.direction = direction
 
@@ -21,7 +20,8 @@ class Level:
         self.game = game
         self.win: pygame.Surface = self.game.win
         self.clock: pygame.time.Clock = self.game.clock
-        (player, hive, invaders) = self.__generateStartingActors()
+
+        self.spawner = LevelSpawner(self)
 
         # state
         self.completed = False
@@ -29,60 +29,28 @@ class Level:
         self.has_won = False
         self.score = 0
 
+        (player, hive, invaders) = self.__generateStartingActors()
+        self.kill_zone = self.spawner.create_kill_zone()
+
         # actors
         self.player = player
         self.invaders = invaders
         self.hive = hive
         self.projectiles: list[Projectile] = []
 
-        self.kill_zone = self.__create_kill_zone()
-
         self.timer = Timer()
 
-
-
     def __generateStartingActors(self):
-        (p_x, p_y) = self.__get_player_starting_location()
+        (p_x, p_y) = self.spawner.get_player_starting_location()
+
         player = Player(self, p_x, p_y)
         hive = Hive(self, self.config.hive_config)
-        invaders = hive.spawn_level()
+        invaders = self.spawner.spawn_initial_invaders(hive)
 
         return player, hive, invaders
 
-    def __get_player_starting_location(self):
-        pWidth = Config.player.width
-        offset = 5
-
-        x = self.game.arena.x + self.game.arena.width / 2 - pWidth / 2
-        y = self.game.arena.y + self.game.arena.height / 2 - pWidth / 2
-
-        if self.config.direction is constants.DIRECTION_UP:
-            y = self.game.arena.y + offset
-        if self.config.direction is constants.DIRECTION_DOWN:
-            y = self.game.arena.height - offset
-        if self.config.direction is constants.DIRECTION_RIGHT:
-            x = self.game.arena.width - offset
-        if self.config.direction is constants.DIRECTION_LEFT:
-            x = self.game.arena.x + offset
-
-        return x, y
-
-    def __create_kill_zone(self):
-        offset = 70
-        height = 5
-        if self.config.direction is constants.DIRECTION_UP:
-            return pygame.Rect(self.game.arena.x, self.game.arena.y + offset, self.game.arena.width, height)
-        if self.config.direction is constants.DIRECTION_RIGHT:
-            return pygame.Rect(self.game.arena.x + self.game.arena.width - offset, self.game.arena.y, height, self.game.arena.height)
-        if self.config.direction is constants.DIRECTION_LEFT:
-            return pygame.Rect(self.game.arena.x + offset, self.game.arena.y, height,
-                               self.game.arena.height)
-            # return pygame.Rect(self.game.arena.x, self.game.arena.y + offset, self.game.arena.width, height)
-
-        return pygame.Rect(self.game.arena.x, self.game.arena.y + self.game.arena.height - offset, self.game.arena.width, height)
-
     def tick(self):
-        self.clock.tick(constants.FPS)
+        self.clock.tick(FPS)
         self.moveActors()
         self.checkCollisions()
         self.check_state()
@@ -147,25 +115,7 @@ class Level:
 
         self.completed = True
 
-    def calculate_time(self):
-        if not self.timer.time_started:
-            self.timer.start()
-
-        return self.timer.get(1)
-
-    def render_ui(self):
-        time_spend = self.calculate_time()
-        text = f'Score: {self.game.score}'
-
-        renderText(self.win, text, constants.BLACK, 36, (60, 20))
-        renderText(self.win, f'{time_spend}', constants.BLACK, 36, (constants.WIDTH / 2, 20))
-        renderText(self.win, f'Lives: {self.player.health}', constants.BLACK, 36, (constants.WIDTH - 60, 20))
-
-        pygame.draw.rect(self.win, (255, 0, 0), self.kill_zone)
-
     def redraw_level(self):
-        self.render_ui()
-
         self.player.draw(self.win)
 
         for invader in self.invaders:

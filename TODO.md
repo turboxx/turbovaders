@@ -20,5 +20,7 @@
 ### Bug Fixes / Refactors / Improvements
 * [x] Yaml Config
 * [ ] Arrow Controls
+* [x] Deprecate global constants and create enums
+* [ ] Directional Determination and Rotation via vectors
 
  

@@ -1,36 +1,48 @@
-config:
-  actors:
-    player:
-      width: 100
+actors:
+  player:
+    width: 100
+    height: 50
+    color: [ 0, 255, 0 ]
+    velocity: 3
+    max_health: 3
+    image: ""
+    sfx:
+      hit: "assets/sfx/sfx_hit.wav"
+      #        death: "assets/sfx/sfx_death.wav"
+      death: "assets/sfx/sfx_hit.wav"
+  invaders:
+    basic:
+      width: 50
       height: 50
-      color: [0, 255, 0]
-      velocity: 3
+      color: [ 255, 0, 255 ]
+      velocity: 2
       max_health: 3
-      image: ""
+      score_gain: 1
+      images:
+        healthy: "assets/img/invader_1.png"
+        damaged: "assets/img/invader_2.png"
+        dying: "assets/img/invader_3.png"
       sfx:
         hit: "assets/sfx/sfx_hit.wav"
-#        death: "assets/sfx/sfx_death.wav"
-        death: "assets/sfx/sfx_hit.wav"
-    invaders:
-      basic:
-        width: 50
-        height: 50
-        color: [255, 0, 255]
-        velocity: 2
-        max_health: 3
-        score_gain: 1
-        images:
-          healthy: "assets/img/invader_1.png"
-          damaged: "assets/img/invader_2.png"
-          dying: "assets/img/invader_3.png"
-        sfx:
-          hit: "assets/sfx/sfx_hit.wav"
-    projectiles:
-      basic:
-        width: 5
-        height: 10
-        color: [255, 0, 0]
-        velocity: 3
-        image: "assets/img/projectile_1.png"
-        sfx:
-          hit: "assets/sfx/sfx_hit.wav"
+  projectiles:
+    basic:
+      width: 5
+      height: 10
+      color: [ 255, 0, 0 ]
+      velocity: 3
+      image: "assets/img/projectile_1.png"
+      sfx:
+        hit: "assets/sfx/sfx_hit.wav"
+
+
+screens:
+  menu:
+    music:
+      basic: "assets/sfx/music_menu.wav"
+  game:
+    music:
+      basic: "assets/sfx/music_game.wav"
+      pause: "assets/sfx/music_pause.wav"
+  result:
+    music:
+      basic: "assets/sfx/music_menu.wav"
