@@ -16,7 +16,7 @@ class Projectile(AActor):
         height = Config.projectile.height
         velocity = Config.projectile.velocity
         # rotate
-        if direction is Direction.RIGHT or direction is Direction.LEFT:
+        if direction in [Direction.RIGHT, Direction.LEFT]:
             width = Config.projectile.width
             height = Config.projectile.height
 

@@ -2,6 +2,7 @@ import sys
 import contextlib
 
 from game.options import Options
+from game.utils import load_img
 
 with contextlib.redirect_stdout(None):
     import pygame
@@ -15,6 +16,8 @@ from game.screens.menu import ScreenMenu
 from game.screens.result import ScreenResult
 
 WIN = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
+pygame.display.set_caption('Turbovaders')
+pygame.display.set_icon(load_img("assets/img/player_1.png"))
 
 
 def initScreens(win, clock, options: Options):

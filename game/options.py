@@ -1,3 +1,4 @@
+from constants import Color
 from file_utils import check_dev_mode
 
 
@@ -21,11 +22,26 @@ class SoundOptions:
         self.volume_music = volume
 
 
+class UIOptions:
+    def __init__(self, dev_mode: bool):
+        self.dark_mode = False
+
+    def get_primary_text_color(self):
+        return Color.BLACK if not self.dark_mode else Color.WHITE
+
+    def get_primary_bg_color(self):
+        return Color.WHITE if not self.dark_mode else Color.BLACK
+
+    def toggle_dark_mode(self):
+        self.dark_mode = not self.dark_mode
+
+
 class Options:
     def __init__(self):
         self.load()
         self.dev_mode = check_dev_mode()
         self.sound = SoundOptions(self.dev_mode)
+        self.ui = UIOptions(self.dev_mode)
 
     # todo: load from some persistence
     def load(self):

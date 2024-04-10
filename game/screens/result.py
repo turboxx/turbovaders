@@ -21,9 +21,9 @@ class ScreenResult(AScreen):
         ui_height = self.win.get_rect().height
         ui_surface = pygame.Surface((ui_width, ui_height))
         ui_surface_rect = ui_surface.get_rect()
-        ui_surface.fill(Color.WHITE.value)
+        ui_surface.fill(self.options.ui.get_primary_bg_color())
         font_size = 36
-        color_primary = Color.BLACK.value
+        color_primary = self.options.ui.get_primary_text_color()
 
         text_status = 'You have lost' if self.game.has_lost else 'Victory'
         text_middle = '' if self.game.has_lost else f'Score: {self.game.score}'

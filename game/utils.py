@@ -74,8 +74,12 @@ def play_music(options: Options, filename, loop=-1):
     pygame.mixer.music.play(loop)
 
 
+def load_img(source):
+    return pygame.image.load(file_utils.resource_path(source))
+
+
 def load_and_transform_img(source, size):
-    img = pygame.image.load(file_utils.resource_path(source))
+    img = load_img(source)
     return pygame.transform.scale(img, size)
 
 

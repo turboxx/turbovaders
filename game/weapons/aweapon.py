@@ -16,6 +16,11 @@ class AWeapon:
             (p_x, p_y) = self._get_projectile_position(projectile_number)
             self.level.projectiles.append(Projectile(self, p_x, p_y, self.actor.faction, self.actor.fire_direction))
 
+    def transition_level(self, actor: AActor):
+        self.actor = actor
+        self.level = actor.level
+        self.fire_direction = actor.fire_direction
+
     def _get_projectile_position(self, projectile_number):
         offset = 5
 

@@ -2,7 +2,9 @@ import pygame
 
 from constants import Direction
 from config import Config
-from game.actors.hive import invaderConfig
+from game.hive import Hive
+
+invaderConfig = Config.invader
 
 
 class LevelSpawner:
@@ -33,7 +35,7 @@ class LevelSpawner:
 
         return x, y
 
-    def spawn_initial_invaders(self, hive):
+    def spawn_initial_invaders(self, hive: "Hive"):
         # we care about "width" only as height is to determine the "row"
         i_width = invaderConfig.width
         i_height = invaderConfig.width
@@ -51,8 +53,6 @@ class LevelSpawner:
         remaining = spawn_count % row_size
 
         last_row_offset = (arena_width - remaining * (i_width + space_between)) / 2
-
-        print(row_size, row_count, remaining)
 
         for row_number in range(row_count + 1):
             i_last_row_offset = 0
@@ -74,7 +74,7 @@ class LevelSpawner:
                 if self.level.config.direction is Direction.DOWN:
                     i_x = offset_x + item_horizontal_offset
                     i_y = offset_y + row_vertical_offset
-                if  self.level.config.direction is Direction.UP:
+                if self.level.config.direction is Direction.UP:
                     i_x = offset_x + item_horizontal_offset
                     i_y = offset_y - row_vertical_offset
                 if self.level.config.direction is Direction.RIGHT:

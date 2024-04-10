@@ -45,6 +45,12 @@ class AActor:
 
         self.rect = (self.x, self.y, self.width, self.height)
 
+    def teleport(self, x: int, y: int):
+        self.x = x
+        self.y = y
+
+        self.rect = (self.x, self.y, self.width, self.height)
+
     def hit(self, attacker: "AActor"):
         if self.__check_is_enemy_faction(attacker):
             self._on_hit()

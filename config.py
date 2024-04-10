@@ -11,6 +11,7 @@ configPlayer = configFileData['actors']['player']
 class ConfigPlayer:
     width: int = configPlayer['width']
     height: int = configPlayer['height']
+    image: str = configPlayer['image']
     color: tuple[int, int, int] = configPlayer['color']
     velocity: int = configPlayer['velocity']
     max_health: int = configPlayer['max_health']

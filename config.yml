@@ -5,7 +5,7 @@ actors:
     color: [ 0, 255, 0 ]
     velocity: 3
     max_health: 3
-    image: ""
+    image: "assets/img/player_1.png"
     sfx:
       hit: "assets/sfx/sfx_hit.wav"
       #        death: "assets/sfx/sfx_death.wav"

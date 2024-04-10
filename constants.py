@@ -17,9 +17,13 @@ class Direction(str, Enum):
     UP = 'direction_up'
 
 
-class Color(Enum):
+class Color(tuple, Enum):
     BLACK = (0, 0, 0)
+    GREY = (105, 105, 105)
     WHITE = (255, 255, 255)
+
+    BG_PRIMARY = WHITE
+    TEXT_PRIMARY = BLACK
 
 
 class Factions(str, Enum):

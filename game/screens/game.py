@@ -15,7 +15,7 @@ class ScreenGame(AScreen):
         super().__init__(win, clock, options, MUSIC_GAME_FILE)
 
     def render(self):
-        self.win.fill(Color.WHITE.value)
+        self.win.fill(self.options.ui.get_primary_bg_color())
         self.__render_ui()
 
         if self.options.dev_mode:
@@ -30,7 +30,7 @@ class ScreenGame(AScreen):
             self.__render_pause_overlay()
 
     def __render_arena(self):
-        pygame.draw.rect(self.win, (240, 240, 240), self.game.arena.rect)
+        pygame.draw.rect(self.win, Color.GREY, self.game.arena.rect, 2)
         pygame.draw.rect(self.win, (255, 0, 0), self.game.active_level.kill_zone)
 
     def __render_ui(self):
@@ -41,11 +41,11 @@ class ScreenGame(AScreen):
         ui_width = self.win.get_rect().width
         ui_height = self.game.arena.y
         ui_surface = pygame.Surface((ui_width, ui_height))
-        ui_surface.fill(Color.WHITE.value)
+        ui_surface.fill(self.options.ui.get_primary_bg_color())
         ui_surface_rect = ui_surface.get_rect()
         padding = 30
         font_size = 36
-        color_primary = Color.BLACK.value
+        color_primary = self.options.ui.get_primary_text_color()
 
         time_spend = self.game.calculate_time()
 
@@ -70,12 +70,12 @@ class ScreenGame(AScreen):
         ui_width = self.win.get_rect().width
         ui_height = self.win.get_rect().height - self.game.arena.y - self.game.arena.height
         ui_surface = pygame.Surface((ui_width, ui_height))
-        ui_surface.fill(Color.WHITE.value)
+        ui_surface.fill(self.options.ui.get_primary_bg_color())
         ui_surface_rect = ui_surface.get_rect()
         ui_dest = (0, self.game.arena.y + self.game.arena.height)
         padding = 30
         font_size = 18
-        color_primary = Color.BLACK.value
+        color_primary = self.options.ui.get_primary_text_color()
 
         text_time = f'A - "Left", D - "Right", Space - Fire, M - Mute'
         renderText(

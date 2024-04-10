@@ -2,7 +2,7 @@ import pygame
 
 from constants import Direction
 
-from game.actors.hive import HiveConfig
+from game.hive import HiveConfig
 from game.arena import Arena
 from game.level import Level, LevelConfig
 from game.options import Options
@@ -37,9 +37,12 @@ class Game:
         self.active_level = self.__next_level()
 
     def __next_level(self):
-        # print('Next level:', self.level_count, len(self.level_configs))
         if self.level_count < len(levels):
-            level = Level(self, levels[self.level_count])
+            player = None
+            if hasattr(self, 'active_level'):
+                player = self.active_level.player
+
+            level = Level(self, levels[self.level_count], player)
             self.active_level = level
             self.level_count += 1
             self.timer.pause()

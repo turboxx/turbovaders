@@ -1,8 +1,9 @@
 import pygame
 import time
+from typing import Optional
 
 from constants import Direction, FPS
-from game.actors.hive import Hive
+from game.hive import Hive
 from game.actors.player import Player
 from game.actors.projectile import Projectile
 from game.level_spawner import LevelSpawner
@@ -16,7 +17,7 @@ class LevelConfig:
 
 
 class Level:
-    def __init__(self, game, config: LevelConfig):
+    def __init__(self, game, config: LevelConfig, player_continued: Optional[Player] = None):
         self.config = config
         self.game = game
         self.win: pygame.Surface = self.game.win
@@ -31,7 +32,7 @@ class Level:
         self.has_won = False
         self.score = 0
 
-        (player, hive, invaders) = self.__generateStartingActors()
+        (player, hive, invaders) = self.__generateStartingActors(player_continued)
         self.kill_zone = self.spawner.create_kill_zone()
 
         # actors
@@ -45,14 +46,25 @@ class Level:
         self.loading_delay = 3
         self.loading_start_time = None
 
-    def __generateStartingActors(self):
+    def __generateStartingActors(self, passed_player: Optional[Player]):
         (p_x, p_y) = self.spawner.get_player_starting_location()
 
-        player = Player(self, p_x, p_y)
+        if not passed_player:
+            player = Player(self, p_x, p_y)
+        else:
+            player = self.__transition_player(passed_player, p_x, p_y)
+
         hive = Hive(self, self.config.hive_config)
         invaders = self.spawner.spawn_initial_invaders(hive)
 
         return player, hive, invaders
+
+    def __transition_player(self, player: Player, x: int, y: int):
+        player.heal()
+        player.teleport(x, y)
+        player.change_level(self)
+
+        return player
 
     def tick(self):
         self.clock.tick(FPS)

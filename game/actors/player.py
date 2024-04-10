@@ -1,14 +1,16 @@
 import pygame
 
-from constants import Direction, Factions
+from constants import Direction, Factions, Color
 from config import Config
 from game.actors.aactor import AActor
-from game.utils import loadSound, get_reverse_direction, get_directional_vector
+from game.utils import loadSound, get_reverse_direction, get_directional_vector, get_rotation_angle, \
+    load_and_transform_img
 from game.weapons.basic import BasicWeapon
 from game.weapons.double import DoubleBarrelWeapon
 
 playerConfig = Config.player
-
+playerSize = (playerConfig.width, playerConfig.height)
+IMG_PLAYER = load_and_transform_img(playerConfig.image, playerSize)
 SFX_HIT = loadSound(playerConfig.sfx_hit)
 SFX_DEATH = loadSound(playerConfig.sfx_death)
 
@@ -18,7 +20,7 @@ class Player(AActor):
         width = playerConfig.width
         height = playerConfig.height
         # rotating actor
-        if level.config.direction is Direction.RIGHT or level.config.direction is Direction.LEFT:
+        if level.config.direction in [Direction.RIGHT, Direction.LEFT]:
             width = playerConfig.height
             height = playerConfig.width
 
@@ -35,10 +37,20 @@ class Player(AActor):
         self.weapon = BasicWeapon(self)
 
     def draw(self, win):
-        (r, g, b) = self.color
         heathMod = self.health / self.maxHealth
-        color = (int(r * heathMod), int(g * heathMod), int(b * heathMod))
-        pygame.draw.rect(win, color, self.rect)
+
+        img = IMG_PLAYER.copy()
+
+        (r, g, b) = Color.WHITE
+        alpha = int(255 * heathMod)
+        img.fill((r, g, b, alpha), None, pygame.BLEND_RGBA_MULT)
+
+        win.blit(self.__rotate_img(img), self.rect)
+
+    def __rotate_img(self, img):
+        angle = get_rotation_angle(self.fire_direction)
+
+        return pygame.transform.rotate(img, angle)
 
     def fire(self):
         self.weapon.fire()
@@ -56,6 +68,9 @@ class Player(AActor):
     def kill(self):
         SFX_DEATH.play()
         self.alive = False
+
+    def heal(self):
+        self.health = self.maxHealth
 
     def set_shield(self, on=True):
         self.is_shielded = on
@@ -97,3 +112,17 @@ class Player(AActor):
         vector.scale_to_length(self.velocity)
 
         return vector
+
+    def change_level(self, level):
+        if level.config.direction in [Direction.RIGHT, Direction.LEFT]:
+            self.width = playerConfig.height
+            self.height = playerConfig.width
+        if level.config.direction in [Direction.UP, Direction.DOWN]:
+            self.width = playerConfig.width
+            self.height = playerConfig.height
+
+        self.level = level
+        self.rect = (self.x, self.y, self.width, self.height)
+        self.fire_direction = self._get_fire_direction()
+
+        self.weapon.transition_level(self)

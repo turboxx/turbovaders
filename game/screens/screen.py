@@ -45,6 +45,8 @@ class AScreen:
             if event.key == pygame.K_m:
                 self.options.sound.toggle_mute()
                 pygame.mixer.music.set_volume(self.options.sound.get_volume_music() / 100)
+            if event.key == pygame.K_n:
+                self.options.ui.toggle_dark_mode()
 
     def render(self):
         pass
