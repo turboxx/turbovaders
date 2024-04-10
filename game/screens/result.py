@@ -29,11 +29,11 @@ class ScreenResult(AScreen):
         text_middle = '' if self.game.has_lost else f'Score: {self.game.score}'
         text_start_game = 'Press Space To Start'
 
-        renderText(ui_surface, text_status, color_primary, font_size,
-                   (ui_surface_rect.width / 2, ui_surface_rect.height / 2 - 40))
-        renderText(ui_surface, text_middle, color_primary, font_size,
-                   (ui_surface_rect.width / 2, ui_surface_rect.height / 2))
-        renderText(ui_surface, text_start_game, color_primary, font_size,
-                   (ui_surface_rect.width / 2, ui_surface_rect.height / 2 + 40))
+        center_horizontal = ui_surface_rect.width / 2
+        center_vertical = ui_surface_rect.height / 2
+
+        renderText(ui_surface, text_status, color_primary, font_size, (center_horizontal, center_vertical - 40))
+        renderText(ui_surface, text_middle, color_primary, font_size, (center_horizontal, center_vertical))
+        renderText(ui_surface, text_start_game, color_primary, font_size, (center_horizontal, center_vertical + 40))
 
         self.win.blit(ui_surface, (0, 0))

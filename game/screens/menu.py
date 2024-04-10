@@ -17,8 +17,8 @@ class ScreenMenu(AScreen):
         ui_width = self.win.get_rect().width
         ui_height = self.win.get_rect().height
         ui_surface = pygame.Surface((ui_width, ui_height))
-        ui_surface_rect = ui_surface.get_rect()
         ui_surface.fill(Color.WHITE.value)
+        ui_surface_rect = ui_surface.get_rect()
         font_size = 40
         color_primary = Color.BLACK.value
 

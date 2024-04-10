@@ -5,20 +5,22 @@ from constants import Direction
 from game.actors.hive import HiveConfig
 from game.arena import Arena
 from game.level import Level, LevelConfig
+from game.options import Options
 from game.timer import Timer
 
 levels = [
-    LevelConfig(HiveConfig(4), direction=Direction.DOWN),
-    LevelConfig(HiveConfig(2), direction=Direction.RIGHT),
-    LevelConfig(HiveConfig(2), direction=Direction.UP),
-    LevelConfig(HiveConfig(2), direction=Direction.LEFT),
+    LevelConfig(HiveConfig(9), direction=Direction.DOWN),
+    LevelConfig(HiveConfig(11), direction=Direction.RIGHT),
+    LevelConfig(HiveConfig(15), direction=Direction.UP),
+    LevelConfig(HiveConfig(20), direction=Direction.LEFT),
 ]
 
 
 class Game:
-    def __init__(self, win: pygame.Surface, clock: pygame.time.Clock):
+    def __init__(self, win: pygame.Surface, clock: pygame.time.Clock, options: Options):
         self.win = win
         self.clock = clock
+        self.options = options
 
         self.score = 0
         self.level_count = 0

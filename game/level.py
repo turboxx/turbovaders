@@ -83,8 +83,8 @@ class Level:
 
             pRect = projectile.get_rect()
             if pRect.colliderect(playerRect):
-                self.player.hit()
-                projectile.hit()
+                self.player.hit(projectile)
+                projectile.hit(self.player)
                 self.update_score(-1)
 
             for invader in self.invaders:
@@ -93,8 +93,8 @@ class Level:
 
                 iRect = invader.get_rect()
                 if pRect.colliderect(iRect):
-                    invader.hit()
-                    projectile.hit()
+                    invader.hit(projectile)
+                    projectile.hit(invader)
                     if not invader.alive:
                         self.update_score(invader.get_bounty())
                     continue
@@ -154,3 +154,16 @@ class Level:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 self.player.fire()
+
+        # cheats
+        if self.game.options.dev_mode:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_e:
+                    self.player.set_shield(True)
+
+                if event.key == pygame.K_q:
+                    self.player.upgrade_weapon()
+
+        # if event.type == pygame.KEYUP:
+        #     if event.key == pygame.K_e:
+        #         self.player.set_shield(False)

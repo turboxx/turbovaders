@@ -41,7 +41,29 @@ def get_relative_left(direction: Direction):
 
 
 def get_rotation_angle(direction: Direction):
-    pass
+    angle = 0
+    if direction == Direction.UP:
+        angle = 180
+    if direction == Direction.LEFT:
+        angle = 270
+    if direction == Direction.RIGHT:
+        angle = 90
+
+    return angle
+
+
+def get_directional_vector(direction: Direction):
+    vector = (0, 0)
+    if direction == Direction.DOWN:
+        vector = (0, 1)
+    if direction == Direction.UP:
+        vector = (0, -1)
+    if direction == Direction.LEFT:
+        vector = (-1, 0)
+    if direction == Direction.RIGHT:
+        vector = (1, 0)
+
+    return pygame.Vector2(vector)
 
 
 def play_music(options: Options, filename, loop=-1):

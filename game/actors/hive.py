@@ -2,11 +2,12 @@ from random import randrange
 
 import pygame
 
-from constants import Direction
+from constants import Direction, Factions
 from config import Config
-from game.actors.actor import AActor
-from game.actors.projectile import Projectile
-from game.utils import load_and_transform_img, loadSound, get_reverse_direction, get_side_directions, get_relative_left
+from game.actors.aactor import AActor
+from game.utils import load_and_transform_img, loadSound, get_reverse_direction, get_side_directions, get_relative_left, \
+    get_directional_vector, get_rotation_angle
+from game.weapons.basic import BasicWeapon
 
 invaderConfig = Config.invader
 invaderSize = (invaderConfig.width, invaderConfig.height)
@@ -136,12 +137,11 @@ class Invader(AActor):
         width = invaderConfig.width
         height = invaderConfig.height
         velocity = invaderConfig.velocity
-        super().__init__(level, x, y, width, height, velocity)
+        super().__init__(level, x, y, width, height, Factions.ENEMY, velocity)
 
         self.color = invaderConfig.color
         self.move_direction: Direction = Direction.DOWN
         self.face_direction: Direction = level.config.direction
-        self.fire_direction: Direction = level.config.direction
 
         self.maxHealth = invaderConfig.max_health
         self.health = self.maxHealth
@@ -149,7 +149,9 @@ class Invader(AActor):
         # to avoid initial onslaught
         self.can_fire = False
 
-    def hit(self):
+        self.weapon = BasicWeapon(self)
+
+    def _on_hit(self):
         SFX_HIT.play()
         self.health -= 1
         if self.health <= 0:
@@ -171,17 +173,10 @@ class Invader(AActor):
             return self.x + self.width + offset, self.y + self.height / 2
 
     def get_move_vector(self):
-        vector = (0, 0)
-        if self.move_direction == Direction.DOWN:
-            vector = (0, self.velocity)
-        if self.move_direction == Direction.UP:
-            vector = (0, -self.velocity)
-        if self.move_direction == Direction.LEFT:
-            vector = (-self.velocity, 0)
-        if self.move_direction == Direction.RIGHT:
-            vector = (self.velocity, 0)
+        vector = get_directional_vector(self.move_direction)
+        vector.scale_to_length(self.velocity)
 
-        return pygame.Vector2(vector)
+        return vector
 
     def move(self):
         if not self.alive:
@@ -205,9 +200,7 @@ class Invader(AActor):
 
     def __fire(self):
         if self.can_fire:
-            (p_x, p_y) = self.__get_projectile_position()
-            self.level.projectiles.append(
-                Projectile(self, p_x, p_y, self.fire_direction))
+            self.weapon.fire()
             self.can_fire = False
 
     def draw(self, win):
@@ -225,13 +218,7 @@ class Invader(AActor):
         #     pygame.draw.rect(win, (125,125,125), self.rect)
 
     def __rotate_img(self, img):
-        angle = 0
-        if self.face_direction == Direction.UP:
-            angle = 180
-        if self.face_direction == Direction.LEFT:
-            angle = 270
-        if self.face_direction == Direction.RIGHT:
-            angle = 90
+        angle = get_rotation_angle(self.face_direction)
 
         return pygame.transform.rotate(img, angle)
 

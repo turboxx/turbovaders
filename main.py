@@ -51,7 +51,7 @@ def main():
 
     # should be menu
     activeScreen = screens[0]
-    game = Game(WIN, clock)
+    game = Game(WIN, clock, options)
 
     while run:
         # how does pygame.event.get() work???
@@ -71,7 +71,7 @@ def main():
 
                     if event.key == pygame.K_SPACE:
                         # start new game
-                        game = Game(WIN, clock)
+                        game = Game(WIN, clock, options)
                         (state, activeScreen) = changeState(state, constants.STATE_GAME, activeScreen, screens)
                         continue
 

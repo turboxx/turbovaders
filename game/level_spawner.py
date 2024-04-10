@@ -36,25 +36,55 @@ class LevelSpawner:
     def spawn_initial_invaders(self, hive):
         # we care about "width" only as height is to determine the "row"
         i_width = invaderConfig.width
+        i_height = invaderConfig.width
         space_between = 10
 
         spawn_count = hive.config.init_count
-        (offset_x, offset_y) = self.__get_invaders_offset()
+        (offset_x, offset_y, arena_offset_x, arena_offset_y) = self.__get_invaders_offset()
 
-        for i in range(spawn_count):
-            i_x = offset_x
-            i_y = offset_y
-            i_width_with_space_between = i * (i_width + space_between)
-            if self.level.config.direction is Direction.DOWN:
-                i_x = offset_x + i_width_with_space_between
-            if self.level.config.direction is Direction.UP:
-                i_x = offset_x + i_width_with_space_between
-            if self.level.config.direction is Direction.RIGHT:
-                i_y = offset_y - i_width_with_space_between
-            if self.level.config.direction is Direction.LEFT:
-                i_y = offset_y + i_width_with_space_between
+        arena_width = self.level.game.arena.width - arena_offset_x * 2
+        if self.level.config.direction in [Direction.LEFT, Direction.RIGHT]:
+            arena_width = self.level.game.arena.height - arena_offset_y * 2
 
-            hive.spawn_invader(i_x, i_y)
+        row_size = arena_width // (i_width + space_between)
+        row_count = spawn_count // row_size
+        remaining = spawn_count % row_size
+
+        last_row_offset = (arena_width - remaining * (i_width + space_between)) / 2
+
+        print(row_size, row_count, remaining)
+
+        for row_number in range(row_count + 1):
+            i_last_row_offset = 0
+            row_vertical_offset = row_number * (i_height + space_between)
+            if row_number >= row_count:
+                i_last_row_offset = last_row_offset
+
+            for row_item_number in range(row_size):
+                # in the last row we count only to the remainder
+                if row_number >= row_count and row_item_number >= remaining:
+                    break
+
+                i_width_with_space_between = row_item_number * (i_width + space_between)
+                item_horizontal_offset = i_last_row_offset + i_width_with_space_between
+
+                i_x = offset_x
+                i_y = offset_y
+
+                if self.level.config.direction is Direction.DOWN:
+                    i_x = offset_x + item_horizontal_offset
+                    i_y = offset_y + row_vertical_offset
+                if  self.level.config.direction is Direction.UP:
+                    i_x = offset_x + item_horizontal_offset
+                    i_y = offset_y - row_vertical_offset
+                if self.level.config.direction is Direction.RIGHT:
+                    i_x = offset_x + row_vertical_offset
+                    i_y = offset_y - item_horizontal_offset
+                if self.level.config.direction is Direction.LEFT:
+                    i_x = offset_x - row_vertical_offset
+                    i_y = offset_y + item_horizontal_offset
+
+                hive.spawn_invader(i_x, i_y)
 
         return hive.invaders
 
@@ -80,7 +110,7 @@ class LevelSpawner:
             offset_y = self.level.game.arena.height - arena_offset_y
             offset_x = self.level.game.arena.x + arena_offset_x
 
-        return offset_x, offset_y
+        return offset_x, offset_y, arena_offset_x, arena_offset_y
 
     def create_kill_zone(self):
         offset = 70

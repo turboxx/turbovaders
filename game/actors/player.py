@@ -1,10 +1,11 @@
 import pygame
 
-from constants import Direction
+from constants import Direction, Factions
 from config import Config
-from game.actors.actor import AActor
-from game.actors.projectile import Projectile
-from game.utils import loadSound, get_reverse_direction
+from game.actors.aactor import AActor
+from game.utils import loadSound, get_reverse_direction, get_directional_vector
+from game.weapons.basic import BasicWeapon
+from game.weapons.double import DoubleBarrelWeapon
 
 playerConfig = Config.player
 
@@ -24,12 +25,14 @@ class Player(AActor):
         velocity = playerConfig.velocity
         color = playerConfig.color
 
-        super().__init__(level, x, y, width, height, velocity)
+        super().__init__(level, x, y, width, height, Factions.PLAYER, velocity)
 
-        self.fire_direction = get_reverse_direction(self.level.config.direction)
         self.color = color
         self.maxHealth = Config.player.max_health
         self.health = self.maxHealth
+        self.is_shielded = False
+
+        self.weapon = BasicWeapon(self)
 
     def draw(self, win):
         (r, g, b) = self.color
@@ -38,23 +41,14 @@ class Player(AActor):
         pygame.draw.rect(win, color, self.rect)
 
     def fire(self):
-        (p_x, p_y) = self.__get_projectile_position()
-        self.level.projectiles.append(Projectile(self, p_x, p_y, self.fire_direction))
+        self.weapon.fire()
 
-    def __get_projectile_position(self):
-        offset = 5
+    def _on_hit(self):
+        if self.is_shielded:
+            return
 
-        if self.fire_direction == Direction.DOWN:
-            return self.x + self.width / 2, self.y + self.height + offset
-        if self.fire_direction == Direction.UP:
-            return self.x + self.width / 2, self.y - offset * 2
-        if self.fire_direction == Direction.LEFT:
-            return self.x - offset * 2, self.y + self.height / 2
-        if self.fire_direction == Direction.RIGHT:
-            return self.x + self.width + offset, self.y + self.height / 2
-
-    def hit(self):
         SFX_HIT.play()
+        self.downgrade_weapon()
         self.health -= 1
         if self.health <= 0:
             self.kill()
@@ -62,6 +56,18 @@ class Player(AActor):
     def kill(self):
         SFX_DEATH.play()
         self.alive = False
+
+    def set_shield(self, on=True):
+        self.is_shielded = on
+
+    def upgrade_weapon(self):
+        self.weapon = DoubleBarrelWeapon(self)
+
+    def downgrade_weapon(self):
+        self.weapon = BasicWeapon(self)
+
+    def _get_fire_direction(self):
+        return get_reverse_direction(self.level.config.direction)
 
     def move(self):
         # todo remove double fetching loading
@@ -80,25 +86,14 @@ class Player(AActor):
         move_left = keys[pygame.K_a]
         move_right = keys[pygame.K_d]
 
-        vector = (0, 0)
-        if move_left:
-            if self.level.config.direction is Direction.DOWN:
-                vector = (-self.velocity, 0)
-            if self.level.config.direction is Direction.UP:
-                vector = (self.velocity, 0)
-            if self.level.config.direction is Direction.RIGHT:
-                vector = (0, self.velocity)
-            if self.level.config.direction is Direction.LEFT:
-                vector = (0, -self.velocity)
+        # do not move
+        if not move_right and not move_left:
+            return pygame.Vector2((0, 0))
 
+        vector = get_directional_vector(self.level.config.direction).rotate(90)
         if move_right:
-            if self.level.config.direction is Direction.DOWN:
-                vector = (self.velocity, 0)
-            if self.level.config.direction is Direction.UP:
-                vector = (-self.velocity, 0)
-            if self.level.config.direction is Direction.RIGHT:
-                vector = (0, -self.velocity)
-            if self.level.config.direction is Direction.LEFT:
-                vector = (0, self.velocity)
+            vector = vector.rotate(180)
 
-        return pygame.Vector2(vector)
+        vector.scale_to_length(self.velocity)
+
+        return vector

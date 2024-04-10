@@ -20,3 +20,8 @@ class Direction(str, Enum):
 class Color(Enum):
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
+
+
+class Factions(str, Enum):
+    PLAYER = 'faction_player'
+    ENEMY = 'faction_enemy'

@@ -1,15 +1,19 @@
 import pygame
 
+from constants import Factions
+
 
 class AActor:
-    def __init__(self, level, x, y, width, height, velocity=0):
+    def __init__(self, level, x, y, width, height, faction: Factions, velocity=0):
         self.level = level
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.faction = faction
         self.velocity = velocity
         self.alive = True
+        self.fire_direction = self._get_fire_direction()
         self.rect = (self.x, self.y, self.width, self.height)
 
     def __str__(self):
@@ -41,6 +45,16 @@ class AActor:
 
         self.rect = (self.x, self.y, self.width, self.height)
 
-    def hit(self):
-        print('Hitting actor hit function!')
-        self.alive = False
+    def hit(self, attacker: "AActor"):
+        if self.__check_is_enemy_faction(attacker):
+            self._on_hit()
+
+    def __check_is_enemy_faction(self, attacker: "AActor"):
+        return self.faction != attacker.faction
+
+    def _on_hit(self):
+        print('hitting AActor __on_hit')
+        pass
+
+    def _get_fire_direction(self):
+        return self.level.config.direction
