@@ -38,13 +38,14 @@ Takes care of:
 ### Pyyaml
 Takes care of configuration
 #### Install
-`pip install -U pyinstaller`
+`pip install PyYAML`
+
 
 ### Pyinstall
 Takes care of builds
 
 #### Install
-`pip install PyYAML`
+`pip install -U pyinstaller`
 
 
 ## Build
